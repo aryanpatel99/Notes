@@ -1,39 +1,48 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NotesList from './components/NotesList'
 import { nanoid } from 'nanoid'
 import Search from './components/Search'
+import Header from './components/Header'
 
 const App = () => {
 
-  const [notes, setNotes] = useState([{
+  const [notes, setNotes] = useState(() => {
+    try {
+      const saved = localStorage.getItem('react-notes-app-data')
+      return saved ? JSON.parse(saved) : [{
     id:nanoid(),
-    text:'first note',
-    date:'13/04/2023'
-  },
-  {
-    id:nanoid(),
-    text:'second note',
-    date:'13/04/2023'
-  },
-  {
-    id:nanoid(),
-    text:'third note',
-    date:'13/04/2023'
-  },
-  {
-    id:nanoid(),
-    text:'first note',
-    date:'13/04/2023'
-  },
-  {
-    id:nanoid(),
-    text:'last note',
-    date:'13/04/2023'
+    text:'My First Note',
+    date:'DD/MM/YYYY'
   }
-])
+]
+    } catch (e) {
+      console.error('Failed to parse notes from localStorage', e)
+      return [{
+        id:nanoid(),
+        text:'My First Note',
+        date:'DD/MM/YYYY'
+      }
+    ]
+    }
+  })
 
 
 const [searchText, setsearchText] = useState('')
+
+const [darkMode, setdarkMode] = useState(false )
+
+useEffect(()=>{
+  const savedNotes = JSON.parse(localStorage.getItem('react-notes-app-data'));
+  if(savedNotes){
+    setNotes(savedNotes)
+  }
+},[])
+
+
+
+useEffect(()=>{
+localStorage.setItem('react-notes-app-data',JSON.stringify(notes))
+},[notes])
 
 function addNote(text){
   const date = new Date()
@@ -54,11 +63,17 @@ const deleteNote= (id)=>{
 
 
   return (
-    <div className='container'>
+
+    <div className={darkMode && 'dark-mode'}>
+
+      <div className='container'>
+      <Header handleToggleDarkMode={setdarkMode}/>
       <Search  handleSearchNote={setsearchText}/>
       <NotesList notes={notes.filter((note)=>note.text.toLowerCase().includes(searchText))} handleClick={addNote} handleDeleteNote={deleteNote}/>
+    </div>
 
     </div>
+    
   )
 }
 
