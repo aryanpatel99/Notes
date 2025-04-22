@@ -67,17 +67,19 @@ button:focus-visible {
   }
 } */
 
-/* *{
+*{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-} */
+}
 
 
-.header{
+.header-content{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .dark-mode{
